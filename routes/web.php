@@ -10,6 +10,6 @@ Route::prefix('pos')
     ->middleware(['web', 'auth'])
     ->group(function () {
 
-        Route::get('/order/create', [PosController::class, 'index'])->name('order.create')->permission('pos.order.create');
+        Route::get('/order/create', [PosController::class, 'index'])->name('order.create');
+        //            ->permission('pos.order.create');
     });
-
