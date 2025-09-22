@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Imagjino\Pos;
+namespace Imagjino\POS;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -22,7 +22,5 @@ final class PosServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
-
-        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
     }
 }
