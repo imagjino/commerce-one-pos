@@ -11,5 +11,6 @@ Route::prefix('pos')
     ->group(function () {
 
         Route::get('/order/create', [PosController::class, 'index'])->name('order.create');
+        Route::post('/order/create', [PosController::class, 'store'])->name('order.store');
         //            ->permission('pos.order.create');
     });

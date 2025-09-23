@@ -1,17 +1,19 @@
 'use client';
 
+import CustomInput from '@/components/input/custom-input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { useLocale } from '@/contexts/locale';
-import { Search } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Cart } from './components/cart';
 import { CustomerDialog } from './components/customer-dialog';
 import { Products } from './components/products';
 import { CartItem, Customer, POSProps } from './data';
 
 export function Form({ products, currency, paymentMethods }: POSProps) {
+    const { t } = useTranslation('POS');
     const [searchTerm, setSearchTerm] = useState('');
     const [cart, setCart] = useState<CartItem[]>([]);
     const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
@@ -26,19 +28,19 @@ export function Form({ products, currency, paymentMethods }: POSProps) {
             <div className="space-y-4 lg:col-span-2">
                 <div className="flex gap-2">
                     <div className="relative flex-1">
-                        <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
-                        <Input
-                            placeholder="Search products or scan barcode..."
+                        <CustomInput
+                            id="productSearch"
+                            placeholder={t('search_products')}
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="h-12 pl-10 text-lg"
+                            errorMessage={undefined}
+                            setFormData={(_, value) => setSearchTerm(value as string)}
+                            hideLabel={true}
                         />
                     </div>
 
                     <CustomerDialog setSelectedCustomer={setSelectedCustomer} />
                 </div>
 
-                {/* Selected Customer */}
                 {selectedCustomer && (
                     <Card>
                         <CardContent className="flex items-center justify-between p-4">
@@ -49,16 +51,24 @@ export function Form({ products, currency, paymentMethods }: POSProps) {
                                 <div className="text-muted-foreground text-sm">{selectedCustomer.phone_no}</div>
                             </div>
                             <div className="text-right">
-                                <div className="text-primary text-sm font-medium">{selectedCustomer.points} points</div>
+                                <div className="text-primary text-sm font-medium">
+                                    {selectedCustomer.points} {t('points')}
+                                </div>
                                 <Button size="sm" variant="ghost" onClick={() => setSelectedCustomer(null)}>
-                                    Remove
+                                    <Trash2 className="h-3 w-3" />
                                 </Button>
                             </div>
                         </CardContent>
                     </Card>
                 )}
 
-                <Products products={{ ...products, data: filteredProducts }} currency={currency} cart={cart} setCart={setCart} />
+                <Products
+                    products={{ ...products, data: filteredProducts }}
+                    currency={currency}
+                    cart={cart}
+                    setCart={setCart}
+                    paymentMethods={paymentMethods}
+                />
             </div>
 
             <Cart cart={cart} setCart={setCart} currency={currency} currentLocale={currentLocale} paymentMethods={paymentMethods} />

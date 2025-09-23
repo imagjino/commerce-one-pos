@@ -2,7 +2,6 @@ import type { BreadcrumbItem } from '@/types';
 import { TranslatableField } from '@/types/helpers';
 import { Dispatch, SetStateAction } from 'react';
 import { route } from 'ziggy-js';
-import { CustomerDialog } from './components/customer-dialog';
 
 export const posBreadcrumbs: BreadcrumbItem[] = [
     {
@@ -72,6 +71,7 @@ export type ProductCategory = {
 export type Currency = {
     id: number;
     symbol: string;
+    exchange: string;
 };
 
 export type Product = {
@@ -149,5 +149,5 @@ export interface Customer {
 }
 
 export type CustomerDialogProps = {
-    setSelectedCustomer: Dispatch<SetStateAction<CustomerDialog | null>>;
+    setSelectedCustomer: Dispatch<SetStateAction<Customer | null>>;
 };

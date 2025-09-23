@@ -9,11 +9,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLocale } from '@/contexts/locale';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Product, ProductsProps, ProductVariant } from '../data';
 
 export function Products({ products, currency, cart, setCart }: ProductsProps) {
     const { currentLocale } = useLocale();
-
+    const { t } = useTranslation('POS');
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
     const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
@@ -55,28 +56,31 @@ export function Products({ products, currency, cart, setCart }: ProductsProps) {
         const effectivePrice = customPrice || variant?.variant_price.final_price || product.variants[0].variant_price.final_price;
 
         const cartItemId = variant ? `${product.id}-${variant.id}` : product.id.toString();
+        const stockQuantity = variant ? variant.quantity : product.variants[0].quantity;
 
         const existingItem = cart.find((item) => item.product.id === product.id && (variant ? item.variant?.id === variant.id : !item.variant));
 
         if (existingItem) {
+            const newQuantity = Math.min(existingItem.quantity + quantity, stockQuantity);
             setCart(
                 cart.map((item) =>
                     item.id === existingItem.id
                         ? {
                               ...item,
-                              quantity: item.quantity + quantity,
+                              quantity: newQuantity,
                           }
                         : item,
                 ),
             );
         } else {
+            const newQuantity = Math.min(quantity, stockQuantity);
             setCart([
                 ...cart,
                 {
                     id: `${cartItemId}-${Date.now()}`,
                     product,
                     variant,
-                    quantity,
+                    quantity: newQuantity,
                     unitPrice: effectivePrice,
                     discount: 0,
                 },
@@ -98,12 +102,12 @@ export function Products({ products, currency, cart, setCart }: ProductsProps) {
                                         {currency.symbol} {product.variants[0].variant_price.final_price.toFixed(2)}
                                     </span>
                                     <Badge variant="secondary" className="text-xs">
-                                        {product.variants.reduce((sum, v) => sum + v.quantity, 0)} left
+                                        {product.variants.reduce((sum, v) => sum + v.quantity, 0)} {t('left')}
                                     </Badge>
                                 </div>
                                 {product.variants.length > 1 && (
                                     <Badge variant="outline" className="text-xs">
-                                        {product.variants.length} variants
+                                        {product.variants.length} {t('variants')}
                                     </Badge>
                                 )}
                             </div>

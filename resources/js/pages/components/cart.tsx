@@ -1,14 +1,16 @@
 'use client';
 
+import CustomInput from '@/components/input/custom-input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Minus, Percent, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CartItem, CartProps } from '../data';
 import { Checkout } from './checkout';
 
 export function Cart({ cart, setCart, currency, currentLocale, paymentMethods }: CartProps) {
+    const { t } = useTranslation('POS');
     const [couponCode, setCouponCode] = useState('');
     const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null);
     const [paymentMethod, setPaymentMethod] = useState<number | null>(paymentMethods[0]?.id || null);
@@ -25,8 +27,6 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods }:
     };
 
     const processPayment = () => {
-        const selectedMethod = paymentMethods.find((m) => m.id === paymentMethod);
-        alert(`Payment of ${currency.symbol}${total.toFixed(2)} processed via ${selectedMethod?.name[currentLocale]}`);
         setCart([]);
         setAppliedCoupon(null);
     };
@@ -42,10 +42,10 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods }:
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center justify-between">
-                        Cart ({cart.length})
+                        {t('cart')} ({cart.length})
                         {cart.length > 0 && (
-                            <Button size="sm" variant="ghost" onClick={() => setCart([])}>
-                                Clear All
+                            <Button size="sm" onClick={() => setCart([])}>
+                                {t('clear_all')}
                             </Button>
                         )}
                     </CardTitle>
@@ -53,7 +53,7 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods }:
 
                 <CardContent className="space-y-4">
                     {cart.length === 0 ? (
-                        <p className="text-muted-foreground py-8 text-center">Cart is empty</p>
+                        <p className="text-muted-foreground py-8 text-center"> {t('cart_empty')}</p>
                     ) : (
                         <>
                             {/* Cart Items */}
@@ -75,7 +75,13 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods }:
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
-                                                onClick={() => updateCartItem(item.id, { quantity: Math.max(1, item.quantity - 1) })}
+                                                onClick={() => {
+                                                    if (item.quantity > 1) {
+                                                        updateCartItem(item.id, { quantity: item.quantity - 1 });
+                                                    } else {
+                                                        removeFromCart(item.id);
+                                                    }
+                                                }}
                                             >
                                                 <Minus className="h-3 w-3" />
                                             </Button>
@@ -83,7 +89,12 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods }:
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
-                                                onClick={() => updateCartItem(item.id, { quantity: item.quantity + 1 })}
+                                                onClick={() => {
+                                                    const maxQuantity = item.product.variants[0].quantity;
+                                                    if (item.quantity < maxQuantity) {
+                                                        updateCartItem(item.id, { quantity: item.quantity + 1 });
+                                                    }
+                                                }}
                                             >
                                                 <Plus className="h-3 w-3" />
                                             </Button>
@@ -97,16 +108,28 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods }:
 
                             {/* Coupon */}
                             <div className="space-y-2">
-                                <div className="flex gap-2">
-                                    <Input placeholder="Coupon code" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} />
-                                    <Button onClick={applyCoupon} disabled={!couponCode}>
-                                        <Percent className="mr-1 h-4 w-4" />
-                                        Apply
+                                <div className="grid grid-cols-3 gap-2">
+                                    <CustomInput
+                                        className="col-span-2"
+                                        id="couponCode"
+                                        placeholder={t('coupon_code')}
+                                        value={couponCode}
+                                        errorMessage={undefined}
+                                        setFormData={(_, value) => setCouponCode(value as string)}
+                                        hideLabel={true}
+                                    />
+
+                                    <Button size="sm" className="col-span-1" onClick={applyCoupon} disabled={!couponCode}>
+                                        <Percent className="sm" />
+                                        {t('apply')}
                                     </Button>
                                 </div>
+
                                 {appliedCoupon && (
-                                    <div className="text-secondary flex justify-between text-sm">
-                                        <span>Coupon: {appliedCoupon.code}</span>
+                                    <div className="flex justify-between text-sm text-gray-900">
+                                        <span>
+                                            {t('coupon')}: {appliedCoupon.code}
+                                        </span>
                                         <span>-{appliedCoupon.discount}%</span>
                                     </div>
                                 )}
@@ -115,15 +138,15 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods }:
                             {/* Totals */}
                             <div className="space-y-2 border-t pt-4">
                                 <div className="flex justify-between text-sm">
-                                    <span>Subtotal:</span>
+                                    <span>{t('subtotal')}:</span>
                                     <span>
                                         {currency.symbol}
                                         {subtotal.toFixed(2)}
                                     </span>
                                 </div>
                                 {couponDiscount > 0 && (
-                                    <div className="text-secondary flex justify-between text-sm">
-                                        <span>Discount:</span>
+                                    <div className="flex justify-between text-sm">
+                                        <span>{t('coupon')}:</span>
                                         <span>
                                             -{currency.symbol}
                                             {couponDiscount.toFixed(2)}
@@ -131,14 +154,14 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods }:
                                     </div>
                                 )}
                                 <div className="flex justify-between text-sm">
-                                    <span>Tax (8%):</span>
+                                    <span>{t('tax')} (8%):</span>
                                     <span>
                                         {currency.symbol}
                                         {tax.toFixed(2)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between border-t pt-2 text-lg font-bold">
-                                    <span>Total:</span>
+                                    <span>{t('total')}:</span>
                                     <span>
                                         {currency.symbol}
                                         {total.toFixed(2)}

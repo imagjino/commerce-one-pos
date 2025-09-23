@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Imagjino\POS\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Imagjino\Additional\Models\Labels\Label;
+use Imagjino\POS\Requests\StorePosOrderRequest;
 use Imagjino\Products\Models\Product;
 use Imagjino\Settings\Models\Country;
 use Imagjino\Settings\Models\Currency;
@@ -43,5 +45,13 @@ final class PosController
             'products' => $products,
             'currency' => $currency,
         ]);
+    }
+
+    /**
+     * Store orders
+     */
+    public function store(StorePosOrderRequest $request): RedirectResponse
+    {
+        return back();
     }
 }

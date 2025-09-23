@@ -62,7 +62,7 @@ export function Checkout({
                             </span>
                         </div>
                         {couponDiscount > 0 && (
-                            <div className="text-secondary flex justify-between text-sm">
+                            <div className="flex justify-between text-sm">
                                 <span>Discount:</span>
                                 <span>
                                     -{currency.symbol}
