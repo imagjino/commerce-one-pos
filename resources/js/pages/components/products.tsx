@@ -127,7 +127,7 @@ export function Products({ products, currency, cart, setCart }: ProductsProps) {
                         <div className="space-y-4">
                             {selectedProduct.variants && selectedProduct.variants.length > 0 && (
                                 <div className="space-y-2">
-                                    <Label>Variant</Label>
+                                    <Label>{t('variant')}</Label>
                                     <Select value={selectedVariant?.id.toString()} onValueChange={handleVariantChange}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select variant" />
@@ -145,12 +145,12 @@ export function Products({ products, currency, cart, setCart }: ProductsProps) {
                             )}
 
                             <div className="space-y-2">
-                                <Label>Quantity</Label>
+                                <Label>{t('quantity')}</Label>
                                 <Input type="number" value={dialogQuantity} onChange={(e) => setDialogQuantity(Number(e.target.value))} min={1} />
                             </div>
 
                             <div className="space-y-2">
-                                <Label>Price</Label>
+                                <Label>{t('price')}</Label>
                                 <Input type="number" value={dialogPrice} onChange={(e) => setDialogPrice(Number(e.target.value))} min={0} />
                             </div>
                         </div>

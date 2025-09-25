@@ -34,7 +34,7 @@ final class PosController
                 'variants.variantPrice:id,variant_id,final_price,sale_price,price,point_price,point_reward,transport_price,personalised_price,start_sale_date,end_sale_date,mobile_discount,use_points,is_on_sale',
             ])
             ->select(['products.id', 'products.brand_id', 'products.name', 'products.has_variants'])
-            ->paginate(20);
+            ->paginate(10);
 
         $currency = Currency::query()->whereIsPrimary(true)->first();
 

@@ -23,5 +23,8 @@
     "points": "Pike",
     "customer_added_successfully": "Klienti u shtua me sukses",
     "search_products": "Kerko produkt ose skano barkodin...",
-    "remove": "Hiq"
+    "remove": "Hiq",
+    "variant": "Variacioni",
+    "quantity": "Sasia",
+    "price": "Cmimi"
 }
