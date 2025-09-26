@@ -9,8 +9,9 @@ import { FormEventHandler, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { route } from 'ziggy-js';
+import { CreateCustomerDialogProps, Customer } from '../data';
 
-export function CreateCustomerDialog() {
+export function CreateCustomerDialog({ onCustomerCreated }: CreateCustomerDialogProps) {
     const { t } = useTranslation('POS');
     const [open, setOpen] = useState(false);
 
@@ -20,13 +21,31 @@ export function CreateCustomerDialog() {
         username: '',
         email: '',
         password: '12345678',
+        points: 0,
     });
 
     const storeCustomer: FormEventHandler = (e) => {
         e.preventDefault();
+
         post(route('customers.store'), {
             preserveScroll: true,
-            onSuccess: () => customerCreated(),
+            onSuccess: (page) => {
+                const props = page.props as { newCustomer?: Customer };
+                const customer: Customer =
+                    props.newCustomer ??
+                    ({
+                        ...data,
+                        id: '',
+                        phone_no: '',
+                    } as Customer);
+
+                if (customer && onCustomerCreated) {
+                    onCustomerCreated(customer);
+                }
+
+                toast(t('customer_added_successfully'), { position: 'top-right', duration: 2000 });
+                closeModal();
+            },
         });
     };
 
@@ -34,11 +53,6 @@ export function CreateCustomerDialog() {
         clearErrors();
         reset();
         setOpen(false);
-    };
-
-    const customerCreated = () => {
-        toast(t('customer_added_successfully'), { position: 'top-right', duration: 2000 });
-        closeModal();
     };
 
     return (

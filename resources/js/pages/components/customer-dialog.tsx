@@ -7,7 +7,8 @@ import { User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Customer, CustomerDialogProps } from '../data';
-import { CreateCustomerDialog } from './create-customer-dialog'; // import the simplified dialog
+import { CreateCustomerDialog } from './create-customer-dialog';
+import { route } from 'ziggy-js';
 
 export function CustomerDialog({ setSelectedCustomer }: CustomerDialogProps) {
     const { t } = useTranslation('POS');
@@ -86,7 +87,12 @@ export function CustomerDialog({ setSelectedCustomer }: CustomerDialogProps) {
                             ))}
                     </div>
 
-                    <CreateCustomerDialog />
+                    <CreateCustomerDialog
+                        onCustomerCreated={(customer) => {
+                            setSelectedCustomer(customer);
+                            setIsOpen(false);
+                        }}
+                    />
                 </div>
             </DialogContent>
         </Dialog>

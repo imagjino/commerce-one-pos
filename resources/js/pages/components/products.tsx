@@ -90,8 +90,8 @@ export function Products({ products, currency, cart, setCart }: ProductsProps) {
 
     return (
         <>
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
-                {products.data.map((product) => (
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
+                {products.map((product) => (
                     <Card key={product.id} className="cursor-pointer transition-shadow hover:shadow-md" onClick={() => handleProductClick(product)}>
                         <CardContent className="p-4">
                             <img src={product.images?.[0]?.url} alt={product.images?.[0]?.alt} className="mb-3 h-32 w-full rounded-md object-cover" />
@@ -130,7 +130,7 @@ export function Products({ products, currency, cart, setCart }: ProductsProps) {
                                     <Label>{t('variant')}</Label>
                                     <Select value={selectedVariant?.id.toString()} onValueChange={handleVariantChange}>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select variant" />
+                                            <SelectValue placeholder={t('select_variant')} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {selectedProduct.variants.map((variant) => (
@@ -146,18 +146,29 @@ export function Products({ products, currency, cart, setCart }: ProductsProps) {
 
                             <div className="space-y-2">
                                 <Label>{t('quantity')}</Label>
-                                <Input type="number" value={dialogQuantity} onChange={(e) => setDialogQuantity(Number(e.target.value))} min={1} />
+                                <Input
+                                    type="number"
+                                    value={dialogQuantity}
+                                    min={1}
+                                    max={selectedVariant?.quantity ?? selectedProduct?.variants[0].quantity ?? 1}
+                                    onChange={(e) => {
+                                        const value = Number(e.target.value);
+                                        const maxQuantity = selectedVariant?.quantity ?? selectedProduct?.variants[0].quantity ?? 1;
+                                        setDialogQuantity(Math.min(Math.max(value, 1), maxQuantity));
+                                    }}
+                                />
                             </div>
-
                             <div className="space-y-2">
-                                <Label>{t('price')}</Label>
+                                <Label>
+                                    {t('price')} {currency.symbol}
+                                </Label>
                                 <Input type="number" value={dialogPrice} onChange={(e) => setDialogPrice(Number(e.target.value))} min={0} />
                             </div>
                         </div>
                     )}
 
                     <DialogFooter>
-                        <Button onClick={handleAddFromDialog}>Add to cart</Button>
+                        <Button onClick={handleAddFromDialog}>{t('add_to_cart')}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

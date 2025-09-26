@@ -84,16 +84,8 @@ export type Product = {
     has_variants: boolean;
 };
 
-export type PaginatedProducts = {
-    data: Product[];
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-};
-
 export type POSProps = {
-    products: PaginatedProducts;
+    products: Product[];
     currency: Currency;
     paymentMethods: PaymentMethod[];
 };
@@ -145,9 +137,28 @@ export interface Customer {
     name: string;
     surname: string;
     phone_no: string;
-    points: string;
+    points: number;
 }
 
 export type CustomerDialogProps = {
     setSelectedCustomer: Dispatch<SetStateAction<Customer | null>>;
+};
+
+export type CreateCustomerDialogProps = {
+    onCustomerCreated?: (customer: Customer) => void;
+};
+
+export type CouponProps = {
+    couponCode: string;
+    setCouponCode: (value: string) => void;
+    appliedCoupon: { code: string; discount: number } | null;
+    applyCoupon: () => void;
+};
+
+export type TotalProps = {
+    subtotal: number;
+    couponDiscount: number;
+    tax: number;
+    total: number;
+    currency: Currency;
 };

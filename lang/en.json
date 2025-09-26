@@ -26,5 +26,13 @@
     "remove": "Hiq",
     "variant": "Variacioni",
     "quantity": "Sasia",
-    "price": "Cmimi"
+    "price": "Cmimi",
+    "complete_payment": "Perfundo blerjen",
+    "items": "Produktet",
+    "discount": "Zbritja",
+    "checkout": "Checkout",
+    "select_payment": "Zgjidh metoden e pageses",
+    "process_payment": "Porosit",
+    "select_variant": "Zgjidh variacionin",
+    "add_to_cart": "Shto ne shporte"
 }

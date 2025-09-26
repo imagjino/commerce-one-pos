@@ -22,12 +22,16 @@ final class PosProductSearchController
             })
             ->with([
                 'images:id,product_id,url,alt',
-                'variants:id,product_id,quantity,sku,barcode',
-                'variants.options',
-                'variants.variantPrice:id,variant_id,final_price,sale_price,price,point_price,point_reward,transport_price,personalised_price,start_sale_date,end_sale_date,mobile_discount,use_points,is_on_sale',
+                'variants' => function ($query) {
+                    $query->where('quantity', '>', 0)
+                        ->with([
+                            'options',
+                            'variantPrice:id,variant_id,final_price,sale_price,price,point_price,point_reward,transport_price,personalised_price,start_sale_date,end_sale_date,mobile_discount,use_points,is_on_sale'
+                        ]);
+                },
             ])
             ->select(['products.id', 'products.name', 'images->featured->url as image', 'min_price', 'max_price', 'products.has_variants', 'in_stock'])
-            ->limit($searchPosProductRequest->limit ?? 10)
+            ->limit(10)
             ->get();
 
         return response()->json(['products' => $products]);

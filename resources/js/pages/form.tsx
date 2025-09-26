@@ -11,8 +11,7 @@ import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { route } from 'ziggy-js';
-import ProductSearchView
-    from '../../../../Products/resources/js/pages/edit/components/similar-products/product-search-view';
+import ProductSearchView from '../../../../Products/resources/js/pages/edit/components/similar-products/product-search-view';
 import { Cart } from './components/cart';
 import { CustomerDialog } from './components/customer-dialog';
 import { Products } from './components/products';

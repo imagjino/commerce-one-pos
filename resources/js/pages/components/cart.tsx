@@ -1,13 +1,14 @@
 'use client';
 
-import CustomInput from '@/components/input/custom-input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Minus, Percent, Plus, Trash2 } from 'lucide-react';
+import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CartItem, CartProps } from '../data';
 import { Checkout } from './checkout';
+import { Coupon } from './coupon';
+import { Total } from './total';
 
 export function Cart({ cart, setCart, currency, currentLocale, paymentMethods }: CartProps) {
     const { t } = useTranslation('POS');
@@ -107,67 +108,10 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods }:
                             </div>
 
                             {/* Coupon */}
-                            <div className="space-y-2">
-                                <div className="grid grid-cols-3 gap-2">
-                                    <CustomInput
-                                        className="col-span-2"
-                                        id="couponCode"
-                                        placeholder={t('coupon_code')}
-                                        value={couponCode}
-                                        errorMessage={undefined}
-                                        setFormData={(_, value) => setCouponCode(value as string)}
-                                        hideLabel={true}
-                                    />
-
-                                    <Button size="sm" className="col-span-1" onClick={applyCoupon} disabled={!couponCode}>
-                                        <Percent className="sm" />
-                                        {t('apply')}
-                                    </Button>
-                                </div>
-
-                                {appliedCoupon && (
-                                    <div className="flex justify-between text-sm text-gray-900">
-                                        <span>
-                                            {t('coupon')}: {appliedCoupon.code}
-                                        </span>
-                                        <span>-{appliedCoupon.discount}%</span>
-                                    </div>
-                                )}
-                            </div>
+                            <Coupon couponCode={couponCode} setCouponCode={setCouponCode} appliedCoupon={appliedCoupon} applyCoupon={applyCoupon} />
 
                             {/* Totals */}
-                            <div className="space-y-2 border-t pt-4">
-                                <div className="flex justify-between text-sm">
-                                    <span>{t('subtotal')}:</span>
-                                    <span>
-                                        {currency.symbol}
-                                        {subtotal.toFixed(2)}
-                                    </span>
-                                </div>
-                                {couponDiscount > 0 && (
-                                    <div className="flex justify-between text-sm">
-                                        <span>{t('coupon')}:</span>
-                                        <span>
-                                            -{currency.symbol}
-                                            {couponDiscount.toFixed(2)}
-                                        </span>
-                                    </div>
-                                )}
-                                <div className="flex justify-between text-sm">
-                                    <span>{t('tax')} (8%):</span>
-                                    <span>
-                                        {currency.symbol}
-                                        {tax.toFixed(2)}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between border-t pt-2 text-lg font-bold">
-                                    <span>{t('total')}:</span>
-                                    <span>
-                                        {currency.symbol}
-                                        {total.toFixed(2)}
-                                    </span>
-                                </div>
-                            </div>
+                            <Total subtotal={subtotal} couponDiscount={couponDiscount} tax={tax} total={total} currency={currency} />
 
                             {/* Checkout */}
                             <Checkout
