@@ -1,7 +1,8 @@
+// Total.tsx
 import { useTranslation } from 'react-i18next';
 import { TotalProps } from '../data';
 
-export function Total({ subtotal, couponDiscount, tax, total, currency }: TotalProps) {
+export function Total({ subtotal, couponDiscount, tax, total, labelTotal, currency }: TotalProps) {
     const { t } = useTranslation('POS');
 
     return (
@@ -24,6 +25,16 @@ export function Total({ subtotal, couponDiscount, tax, total, currency }: TotalP
                 </div>
             )}
 
+            {labelTotal > 0 && (
+                <div className="flex justify-between text-sm">
+                    <span>{t('labels_total')}:</span>
+                    <span>
+                        {currency.symbol}
+                        {labelTotal.toFixed(2)}
+                    </span>
+                </div>
+            )}
+
             <div className="flex justify-between text-sm">
                 <span>{t('tax')} (8%):</span>
                 <span>
@@ -36,7 +47,7 @@ export function Total({ subtotal, couponDiscount, tax, total, currency }: TotalP
                 <span>{t('total')}:</span>
                 <span>
                     {currency.symbol}
-                    {total.toFixed(2)}
+                    {(total + labelTotal).toFixed(2)}
                 </span>
             </div>
         </div>

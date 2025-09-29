@@ -91,6 +91,7 @@ export function Checkout({
                     </div>
 
                     <Button
+                        type="submit"
                         size="lg"
                         className="w-full"
                         onClick={() => {

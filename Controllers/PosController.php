@@ -23,7 +23,7 @@ final class PosController
     {
         $paymentMethods = PaymentMethod::query()->whereActive(true)->select(['id', 'name', 'image'])->get();
         $cities = Country::query()->with(['cities'])->get();
-        $labels = Label::query()->get();
+        $labels = Label::query()->whereActive(true)->get();
         $products = Product::query()
             ->with([
                 'brand:id,brand_name',
@@ -57,6 +57,7 @@ final class PosController
      */
     public function store(StorePosOrderRequest $request): RedirectResponse
     {
+        dd($request->all());
         return back();
     }
 }

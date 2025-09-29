@@ -34,5 +34,8 @@
     "select_payment": "Zgjidh metoden e pageses",
     "process_payment": "Porosit",
     "select_variant": "Zgjidh variacionin",
-    "add_to_cart": "Shto ne shporte"
+    "add_to_cart": "Shto ne shporte",
+    "select_label": "Zgjidh paketimin",
+    "label": "Paketimi",
+    "labels_total": "Paketimi"
 }

@@ -86,6 +86,7 @@ export type Product = {
 
 export type POSProps = {
     products: Product[];
+    labels: OrderLabel[];
     currency: Currency;
     paymentMethods: PaymentMethod[];
 };
@@ -93,6 +94,7 @@ export type POSProps = {
 export type CartItem = {
     id: string;
     product: Product;
+    label?: OrderLabel;
     variant?: ProductVariant;
     quantity: number;
     unitPrice: number;
@@ -110,11 +112,19 @@ export type PaymentMethod = {
     image?: string;
 };
 
+export type OrderLabel = {
+    id: string;
+    name: TranslatableField;
+    price: number;
+    image: string;
+};
+
 export type CartProps = {
     cart: CartItem[];
     setCart: (cart: CartItem[]) => void;
     currency: Currency;
     paymentMethods: PaymentMethod[];
+    labels: OrderLabel[];
     currentLocale: string;
 };
 
@@ -160,5 +170,39 @@ export type TotalProps = {
     couponDiscount: number;
     tax: number;
     total: number;
+    labelTotal: number;
     currency: Currency;
+};
+
+export type LabelsProps = {
+    labels: OrderLabel[];
+    cartLabels: (OrderLabel & { quantity: number; id: string })[];
+    setCartLabels: React.Dispatch<React.SetStateAction<(OrderLabel & { quantity: number; id: string })[]>>;
+    updateLabelQuantity: (id: string, quantity: number) => void;
+    removeLabelFromCart: (id: string) => void;
+    currency: Currency;
+    currentLocale: string;
+};
+
+export type CartProductsProps = {
+    cart: CartItem[];
+    currency: Currency;
+    currentLocale: string;
+    updateCartItem: (id: string, updates: Partial<CartItem>) => void;
+    removeFromCart: (id: string) => void;
+};
+
+export type Order = {
+    id: string;
+    currency_id: string;
+    order_status_id: string;
+    customer_id: string;
+    payment_method_id: string;
+    origin: string;
+    subtotal: number;
+    label_value: number;
+    discount_value: number;
+    total: number;
+    products: Product[];
+    labels: OrderLabel[];
 };
