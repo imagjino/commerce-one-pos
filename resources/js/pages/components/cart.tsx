@@ -11,7 +11,7 @@ import { Coupon } from './coupon';
 import { Labels } from './labels';
 import { Total } from './total';
 
-export function Cart({ cart, setCart, currency, currentLocale, paymentMethods, labels }: CartProps) {
+export function Cart({ cart, setCart, currency, currentLocale, paymentMethods, labels, storeOrder, setData }: CartProps) {
     const { t } = useTranslation('POS');
     const [couponCode, setCouponCode] = useState('');
     const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null);
@@ -19,7 +19,6 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods, l
 
     const [cartLabels, setCartLabels] = useState<(OrderLabel & { quantity: number; id: string })[]>([]);
 
-    // Calculate subtotal including products + labels
     const subtotal =
         cart.reduce((sum, item) => sum + item.unitPrice * item.quantity - (item.discount || 0), 0) +
         cartLabels.reduce((sum, label) => sum + label.price * label.quantity, 0);
@@ -127,6 +126,7 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods, l
                                 processPayment={processPayment}
                                 paymentMethods={paymentMethods}
                                 currentLocale={currentLocale}
+                                onSubmit={storeOrder}
                             />
                         </>
                     )}

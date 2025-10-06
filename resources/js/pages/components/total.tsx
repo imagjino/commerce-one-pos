@@ -1,9 +1,21 @@
-// Total.tsx
+'use client';
+
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TotalProps } from '../data';
 
-export function Total({ subtotal, couponDiscount, tax, total, labelTotal, currency }: TotalProps) {
+export function Total({ subtotal, couponDiscount, tax, total, labelTotal, currency, setData }: TotalProps) {
     const { t } = useTranslation('POS');
+
+    useEffect(() => {
+        if (setData) {
+            setData('subtotal', subtotal);
+            setData('discount_value', couponDiscount);
+            setData('label_value', labelTotal);
+            setData('total', total);
+            setData('tax_value', tax);
+        }
+    }, [subtotal, couponDiscount, tax, total, labelTotal, setData]);
 
     return (
         <div className="space-y-2 border-t pt-4">

@@ -126,6 +126,8 @@ export type CartProps = {
     paymentMethods: PaymentMethod[];
     labels: OrderLabel[];
     currentLocale: string;
+    storeOrder: (e: React.FormEvent) => void;
+    setData?: <K extends keyof Order>(field: K, value: Order[K]) => void;
 };
 
 export type CheckoutProps = {
@@ -140,6 +142,8 @@ export type CheckoutProps = {
     processPayment: () => void;
     paymentMethods: PaymentMethod[];
     currentLocale: string;
+    onSubmit: (e: React.FormEvent) => void;
+    setData?: <K extends keyof Order>(field: K, value: Order[K]) => void;
 };
 
 export interface Customer {
@@ -172,6 +176,7 @@ export type TotalProps = {
     total: number;
     labelTotal: number;
     currency: Currency;
+    setData?: <K extends keyof Order>(field: K, value: Order[K]) => void;
 };
 
 export type LabelsProps = {
@@ -197,11 +202,12 @@ export type Order = {
     currency_id: string;
     order_status_id: string;
     customer_id: string;
-    payment_method_id: string;
+    payment_method_id: number;
     origin: string;
     subtotal: number;
     label_value: number;
     discount_value: number;
+    tax_value: number;
     total: number;
     products: Product[];
     labels: OrderLabel[];

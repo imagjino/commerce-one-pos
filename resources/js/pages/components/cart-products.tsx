@@ -18,6 +18,7 @@ export function CartProducts({ cart, currency, currentLocale, updateCartItem, re
                     </div>
                     <div className="flex items-center gap-1">
                         <Button
+                            type="button"
                             size="sm"
                             variant="ghost"
                             onClick={() => {
@@ -29,6 +30,7 @@ export function CartProducts({ cart, currency, currentLocale, updateCartItem, re
                         </Button>
                         <span className="w-8 text-center text-sm">{item.quantity}</span>
                         <Button
+                            type="button"
                             size="sm"
                             variant="ghost"
                             onClick={() => {

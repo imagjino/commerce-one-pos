@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
-import { CheckoutProps, PaymentMethod } from '../data';
 import { useTranslation } from 'react-i18next';
+import { CheckoutProps, PaymentMethod } from '../data';
 
 export function Checkout({
     cart,
@@ -16,9 +16,10 @@ export function Checkout({
     currency,
     paymentMethod,
     setPaymentMethod,
-    processPayment,
     paymentMethods,
     currentLocale,
+    onSubmit,
+    setData,
 }: CheckoutProps) {
     const [isOpen, setIsOpen] = useState(false);
     const { t } = useTranslation('POS');
@@ -38,13 +39,16 @@ export function Checkout({
                 <div className="space-y-4">
                     {/* Payment Methods */}
                     <div className="space-y-2">
-                        <Label>Payment Method</Label>
+                        <Label>{t('payment_methods')}</Label>
                         <div className="grid grid-cols-3 gap-2">
                             {paymentMethods.map((method: PaymentMethod) => (
                                 <Button
                                     key={method.id}
                                     variant={paymentMethod === method.id ? 'default' : 'outline'}
-                                    onClick={() => setPaymentMethod(method.id)}
+                                    onClick={() => {
+                                        setPaymentMethod(method.id);
+                                        setData?.('payment_method_id', method.id);
+                                    }}
                                     className="flex h-16 flex-col items-center justify-center gap-1"
                                 >
                                     {method.image && <img src={method.image} alt={method.name[currentLocale]} className="h-5 w-5" />}
@@ -94,9 +98,10 @@ export function Checkout({
                         type="submit"
                         size="lg"
                         className="w-full"
-                        onClick={() => {
+                        onClick={(e) => {
+                            e.preventDefault();
                             if (!paymentMethod) return alert(t('select_payment'));
-                            processPayment();
+                            onSubmit(e);
                             setIsOpen(false);
                         }}
                     >
