@@ -16,7 +16,7 @@ final class PosProductSearchController
     public function __invoke(SearchPosProductRequest $searchPosProductRequest): JsonResponse
     {
         $products = Product::query()
-            ->where('name', 'LIKE', '%' . $searchPosProductRequest->key . '%')
+            ->where('name', 'LIKE', '%'.$searchPosProductRequest->key.'%')
             ->when($searchPosProductRequest->excluded, function ($query) use ($searchPosProductRequest) {
                 $query->whereNotIn('id', $searchPosProductRequest->excluded);
             })
@@ -26,7 +26,7 @@ final class PosProductSearchController
                     $query->where('quantity', '>', 0)
                         ->with([
                             'options',
-                            'variantPrice:id,variant_id,final_price,sale_price,price,point_price,point_reward,transport_price,personalised_price,start_sale_date,end_sale_date,mobile_discount,use_points,is_on_sale'
+                            'variantPrice:id,variant_id,final_price,sale_price,price,point_price,point_reward,transport_price,personalised_price,start_sale_date,end_sale_date,mobile_discount,use_points,is_on_sale',
                         ]);
                 },
             ])

@@ -33,7 +33,7 @@ final class PosController
                     $query->where('quantity', '>', 0)
                         ->with([
                             'options',
-                            'variantPrice:id,variant_id,final_price,sale_price,price,point_price,point_reward,transport_price,personalised_price,start_sale_date,end_sale_date,mobile_discount,use_points,is_on_sale'
+                            'variantPrice:id,variant_id,final_price,sale_price,price,point_price,point_reward,transport_price,personalised_price,start_sale_date,end_sale_date,mobile_discount,use_points,is_on_sale',
                         ]);
                 },
             ])
@@ -58,6 +58,7 @@ final class PosController
     public function store(StorePosOrderRequest $request): RedirectResponse
     {
         dd($request->all());
+
         return back();
     }
 }
