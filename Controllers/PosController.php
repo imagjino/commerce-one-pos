@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Imagjino\POS\Controllers;
+namespace Imagjino\Pos\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Imagjino\Additional\Models\Labels\Label;
