@@ -20,6 +20,7 @@ export function Checkout({
     currentLocale,
     onSubmit,
     setData,
+    processPayment,
 }: CheckoutProps) {
     const [isOpen, setIsOpen] = useState(false);
     const { t } = useTranslation('POS');
@@ -103,6 +104,7 @@ export function Checkout({
                             if (!paymentMethod) return alert(t('select_payment'));
                             onSubmit(e);
                             setIsOpen(false);
+                            processPayment();
                         }}
                     >
                         {t('process_payment')} - {currency.symbol}

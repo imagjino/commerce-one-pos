@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CartItem, CartProps, OrderLabel } from '../data';
 import { CartProducts } from './cart-products';
@@ -11,22 +11,74 @@ import { Coupon } from './coupon';
 import { Labels } from './labels';
 import { Total } from './total';
 
-export function Cart({ cart, setCart, currency, currentLocale, paymentMethods, labels, storeOrder, setData }: CartProps) {
+export function Cart({
+    cart,
+    setCart,
+    currency,
+    currentLocale,
+    paymentMethods,
+    labels,
+    storeOrder,
+    setData,
+    selectedCustomer,
+    setSelectedCustomer,
+}: CartProps) {
     const { t } = useTranslation('POS');
     const [couponCode, setCouponCode] = useState('');
     const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null);
     const [paymentMethod, setPaymentMethod] = useState<number | null>(paymentMethods[0]?.id || null);
-
     const [cartLabels, setCartLabels] = useState<(OrderLabel & { quantity: number; id: string })[]>([]);
 
-    const subtotal =
-        cart.reduce((sum, item) => sum + item.unitPrice * item.quantity - (item.discount || 0), 0) +
-        cartLabels.reduce((sum, label) => sum + label.price * label.quantity, 0);
-
-    const couponDiscount = appliedCoupon ? (subtotal * appliedCoupon.discount) / 100 : 0;
-    const tax = (subtotal - couponDiscount) * 0.08;
+    // Calculate totals
+    const subtotal = cart.reduce((sum, item) => sum + item.unitPrice * item.quantity - (item.discount || 0), 0);
     const labelTotal = cartLabels.reduce((sum, label) => sum + label.price * label.quantity, 0);
-    const total = subtotal - couponDiscount + tax;
+    const discountValue = appliedCoupon ? (subtotal * appliedCoupon.discount) / 100 : 0;
+    const tax = (subtotal - discountValue + labelTotal) * 0.08;
+    const total = subtotal - discountValue + labelTotal + tax;
+
+    // Sync data to form
+    useEffect(() => {
+        if (setData) {
+            setData(
+                'products',
+                cart.map((item) => {
+                    const variant = item.variant || item.product.variants[0];
+                    return {
+                        variant_id: variant.id,
+                        quantity: item.quantity,
+                        unit_price: item.unitPrice,
+                        discount: item.discount || 0,
+                        transport: variant.variant_price.transport_price,
+                        personalised: variant.variant_price.personalised_price,
+                        total: item.unitPrice * item.quantity,
+                        point_reward: 0,
+                        personalised_text: '',
+                        name: item.product.name,
+                    };
+                }),
+            );
+
+            setData(
+                'labels',
+                cartLabels.map((label) => ({
+                    label_id: label.id,
+                    name: label.name,
+                    quantity: label.quantity,
+                    price: label.price,
+                    total: label.price * label.quantity,
+                })),
+            );
+
+            setData('customer_id', selectedCustomer?.id);
+            setData('payment_method_id', paymentMethod);
+            setData('order_status_id', '2');
+            setData('subtotal', subtotal);
+            setData('discount_value', discountValue);
+            setData('label_value', labelTotal);
+            setData('tax_value', tax);
+            setData('total', total);
+        }
+    }, [cart, cartLabels, appliedCoupon, subtotal, discountValue, labelTotal, tax, total, setData, selectedCustomer, paymentMethod]);
 
     const applyCoupon = () => {
         if (couponCode === 'SAVE10') setAppliedCoupon({ code: couponCode, discount: 10 });
@@ -38,6 +90,7 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods, l
         setCart([]);
         setCartLabels([]);
         setAppliedCoupon(null);
+        setSelectedCustomer(null);
     };
 
     const updateCartItem = (id: string, updates: Partial<CartItem>) => {
@@ -65,6 +118,7 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods, l
                                 onClick={() => {
                                     setCart([]);
                                     setCartLabels([]);
+                                    setAppliedCoupon(null);
                                 }}
                             >
                                 {t('clear_all')}
@@ -75,7 +129,7 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods, l
 
                 <CardContent className="space-y-4">
                     {cart.length === 0 && cartLabels.length === 0 ? (
-                        <p className="text-muted-foreground py-8 text-center"> {t('cart_empty')}</p>
+                        <p className="text-muted-foreground py-8 text-center">{t('cart_empty')}</p>
                     ) : (
                         <>
                             {/* Cart Products */}
@@ -106,7 +160,7 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods, l
                             {/* Totals */}
                             <Total
                                 subtotal={subtotal}
-                                couponDiscount={couponDiscount}
+                                couponDiscount={discountValue}
                                 tax={tax}
                                 total={total}
                                 currency={currency}
@@ -117,7 +171,7 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods, l
                             <Checkout
                                 cart={cart}
                                 subtotal={subtotal}
-                                couponDiscount={couponDiscount}
+                                couponDiscount={discountValue}
                                 tax={tax}
                                 total={total}
                                 currency={currency}
@@ -126,7 +180,10 @@ export function Cart({ cart, setCart, currency, currentLocale, paymentMethods, l
                                 processPayment={processPayment}
                                 paymentMethods={paymentMethods}
                                 currentLocale={currentLocale}
-                                onSubmit={storeOrder}
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    storeOrder(paymentMethod);
+                                }}
                             />
                         </>
                     )}

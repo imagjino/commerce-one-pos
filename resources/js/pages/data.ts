@@ -126,8 +126,10 @@ export type CartProps = {
     paymentMethods: PaymentMethod[];
     labels: OrderLabel[];
     currentLocale: string;
-    storeOrder: (e: React.FormEvent) => void;
+    storeOrder: (paymentMethod: number) => void;
     setData?: <K extends keyof Order>(field: K, value: Order[K]) => void;
+    selectedCustomer: Customer | null;
+    setSelectedCustomer: (customer: Customer | null) => void;
 };
 
 export type CheckoutProps = {
@@ -176,7 +178,6 @@ export type TotalProps = {
     total: number;
     labelTotal: number;
     currency: Currency;
-    setData?: <K extends keyof Order>(field: K, value: Order[K]) => void;
 };
 
 export type LabelsProps = {
@@ -195,10 +196,32 @@ export type CartProductsProps = {
     currentLocale: string;
     updateCartItem: (id: string, updates: Partial<CartItem>) => void;
     removeFromCart: (id: string) => void;
+    setData?: <K extends keyof Order>(field: K, value: Order[K]) => void;
+};
+
+export type OrderProduct = {
+    variant_id: number;
+    name: TranslatableField;
+    quantity: number;
+    unit_price: number;
+    discount: number;
+    transport: number;
+    personalised: number;
+    total: number;
+    point_reward: number;
+    personalised_text?: string;
+};
+
+export type OrderLabelData = {
+    label_id: string;
+    name: TranslatableField;
+    quantity: number;
+    price: number;
+    total: number;
 };
 
 export type Order = {
-    id: string;
+    id?: string;
     currency_id: string;
     order_status_id: string;
     customer_id: string;
@@ -209,6 +232,6 @@ export type Order = {
     discount_value: number;
     tax_value: number;
     total: number;
-    products: Product[];
-    labels: OrderLabel[];
+    products: OrderProduct[];
+    labels: OrderLabelData[];
 };

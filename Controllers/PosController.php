@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Imagjino\Pos\Controllers;
+namespace Imagjino\POS\Controllers;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Imagjino\Additional\Models\Labels\Label;
+use Imagjino\POS\Helpers\PosOrderService;
 use Imagjino\POS\Requests\StorePosOrderRequest;
 use Imagjino\Products\Models\Product;
 use Imagjino\Settings\Models\Country;
@@ -13,9 +15,16 @@ use Imagjino\Settings\Models\Currency;
 use Imagjino\Settings\Models\PaymentMethod;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
-final class PosController
+final readonly class PosController
 {
+    public function __construct(
+        private PosOrderService $posOrderService,
+    )
+    {
+    }
+
     /**
      * Return Inertia view of POS
      */
@@ -54,11 +63,18 @@ final class PosController
 
     /**
      * Store orders
+     *
+     * @throws Throwable
      */
     public function store(StorePosOrderRequest $request): RedirectResponse
     {
-        dd($request->all());
+        DB::beginTransaction();
+
+        $this->posOrderService->store($request);
+
+        DB::commit();
 
         return back();
     }
 }
+

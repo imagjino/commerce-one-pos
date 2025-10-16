@@ -1,6 +1,5 @@
 'use client';
 
-import CustomInput from '@/components/input/custom-input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -14,12 +13,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { route } from 'ziggy-js';
-import ProductSearchView
-    from '../../../../Products/resources/js/pages/edit/components/similar-products/product-search-view';
+import ProductSearchView from '../../../../Products/resources/js/pages/edit/components/similar-products/product-search-view';
 import { Cart } from './components/cart';
 import { CustomerDialog } from './components/customer-dialog';
 import { Products } from './components/products';
-import { CartItem, Customer, POSProps, Product, ProductVariant } from './data';
+import { CartItem, Customer, Order, POSProps, Product, ProductVariant } from './data';
 
 export function Form({ products, currency, paymentMethods, labels }: POSProps) {
     const { t } = useTranslation('POS');
@@ -33,9 +31,11 @@ export function Form({ products, currency, paymentMethods, labels }: POSProps) {
     const [dialogQuantity, setDialogQuantity] = useState(1);
     const [dialogPrice, setDialogPrice] = useState(0);
 
-    const { setData, data, post, processing, reset, errors } = useForm({
+    const form = useForm<Order>({
+        id: '',
+        currency_id: currency.id.toString(),
         customer_id: '',
-        payment_method_id: '',
+        payment_method_id: paymentMethods[0]?.id ?? 0,
         order_status_id: '',
         subtotal: 0,
         label_value: 0,
@@ -43,6 +43,8 @@ export function Form({ products, currency, paymentMethods, labels }: POSProps) {
         tax_value: 0,
         total: 0,
         origin: 'POS',
+        products: [],
+        labels: [],
     });
 
     /** Add item to cart */
@@ -106,33 +108,30 @@ export function Form({ products, currency, paymentMethods, labels }: POSProps) {
 
     /** Store order: calculates totals and posts data */
     const storeOrder = (paymentMethod: number) => {
-        if (!selectedCustomer) return toast(t('select_customer'), { position: 'top-right' });
-        if (!paymentMethod) return toast(t('select_payment'), { position: 'top-right' });
-
         const subtotal = cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-        const labelTotal = cart.reduce((sum, item) => sum + (item.label?.price || 0), 0);
+        const labelTotal = cart.reduce((sum, label) => sum + label.unitPrice * label.quantity, 0);
         const discountValue = cart.reduce((sum, item) => sum + (item.discount || 0), 0);
         const tax = (subtotal - discountValue + labelTotal) * 0.08;
         const total = subtotal - discountValue + labelTotal + tax;
 
-        setData((prev) => ({
-            ...prev,
-            customer_id: selectedCustomer.id.toString(),
-            payment_method_id: paymentMethod.toString(),
-            order_status_id: '1',
+        form.setData({
+            customer_id: selectedCustomer?.id.toString(),
+            currency_id: currency.id.toString(),
+            payment_method_id: paymentMethod,
+            order_status_id: '2',
             subtotal,
             discount_value: discountValue,
             label_value: labelTotal,
             tax_value: tax,
             total,
             origin: 'POS',
-        }));
+            products: form.data.products,
+            labels: form.data.labels,
+        });
 
-        post(route('pos.order.store'), {
+        form.post(route('pos.order.store'), {
             preserveScroll: true,
-            onSuccess: () => {
-                toast(t('order_added_successfully'), { position: 'top-right', duration: 2000 });
-            },
+            onSuccess: () => toast(t('order_added_successfully'), { position: 'top-right', duration: 2000 }),
         });
     };
 
@@ -154,14 +153,8 @@ export function Form({ products, currency, paymentMethods, labels }: POSProps) {
                 {selectedCustomer && (
                     <Card>
                         <CardContent className="flex items-center justify-between p-4">
-                            <CustomInput
-                                type="hidden"
-                                id="customer_id"
-                                value={data.customer_id}
-                                placeholder={t('customer_id')}
-                                setFormData={setData}
-                            />
                             <div>
+                                <Input type="hidden" id="customer_id" value={form.data.customer_id} />
                                 <div className="font-medium">
                                     {selectedCustomer.name} {selectedCustomer.surname}
                                 </div>
@@ -191,6 +184,9 @@ export function Form({ products, currency, paymentMethods, labels }: POSProps) {
                 paymentMethods={paymentMethods}
                 labels={labels}
                 storeOrder={storeOrder}
+                setData={form.setData}
+                selectedCustomer={selectedCustomer}
+                setSelectedCustomer={setSelectedCustomer}
             />
 
             {/* Product Dialog */}

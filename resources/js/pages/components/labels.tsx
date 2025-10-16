@@ -15,7 +15,7 @@ export function Labels({ labels, cartLabels, setCartLabels, updateLabelQuantity,
         if (existing) {
             updateLabelQuantity(existing.id, existing.quantity + 1);
         } else {
-            setCartLabels([...cartLabels, { ...label, quantity: 1, id: `label-${label.id}` }]);
+            setCartLabels([...cartLabels, { ...label, quantity: 1, id: label.id.toString() }]);
         }
     };
 
