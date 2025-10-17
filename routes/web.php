@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use Imagjino\Pos\Controllers\PosController;
-use Imagjino\Pos\Controllers\PosProductSearchController;
+use Imagjino\POS\Controllers\PosController;
+use Imagjino\POS\Controllers\PosProductSearchController;
 
 Route::prefix('pos')
     ->as('pos.')

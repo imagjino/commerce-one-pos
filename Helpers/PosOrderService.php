@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Imagjino\Pos\Helpers;
+namespace Imagjino\POS\Helpers;
 
 use Illuminate\Support\Str;
 use Imagjino\Orders\Models\Order;
@@ -34,7 +34,7 @@ final class PosOrderService
 
         $pointReward = $this->storeProducts($order, $request->products);
 
-        if (!empty($request->labels)) {
+        if (! empty($request->labels)) {
             $this->storeLabels($order, $request->labels);
         }
 
