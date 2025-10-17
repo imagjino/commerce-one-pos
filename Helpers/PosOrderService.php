@@ -34,7 +34,7 @@ final class PosOrderService
 
         $pointReward = $this->storeProducts($order, $request->products);
 
-        if (!empty($request->labels)) {
+        if (! empty($request->labels)) {
             $this->storeLabels($order, $request->labels);
         }
 

@@ -21,9 +21,7 @@ final readonly class PosController
 {
     public function __construct(
         private PosOrderService $posOrderService,
-    )
-    {
-    }
+    ) {}
 
     /**
      * Return Inertia view of POS
@@ -77,4 +75,3 @@ final readonly class PosController
         return back();
     }
 }
-
