@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Imagjino\POS\Helpers;
+namespace Imagjino\Pos\Helpers;
 
 use Illuminate\Support\Str;
 use Imagjino\Orders\Models\Order;
 use Imagjino\Orders\Models\OrderLabel;
 use Imagjino\Orders\Models\OrderProduct;
-use Imagjino\POS\Requests\StorePosOrderRequest;
+use Imagjino\Pos\Requests\StorePosOrderRequest;
 use Imagjino\Products\Models\Variant;
 use Imagjino\Settings\Models\Currency;
 use Throwable;
@@ -16,7 +16,7 @@ use Throwable;
 final class PosOrderService
 {
     /**
-     * Store POS order
+     * Store Pos order
      *
      * @throws Throwable
      */
@@ -34,7 +34,7 @@ final class PosOrderService
 
         $pointReward = $this->storeProducts($order, $request->products);
 
-        if (! empty($request->labels)) {
+        if (!empty($request->labels)) {
             $this->storeLabels($order, $request->labels);
         }
 

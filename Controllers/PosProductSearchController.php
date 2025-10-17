@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Imagjino\POS\Controllers;
+namespace Imagjino\Pos\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use Imagjino\POS\Requests\SearchPosProductRequest;
+use Imagjino\Pos\Requests\SearchPosProductRequest;
 use Imagjino\Products\Models\Product;
 
 final class PosProductSearchController
 {
     /**
-     * Search products for POS
+     * Search products for Pos
      */
     public function __invoke(SearchPosProductRequest $searchPosProductRequest): JsonResponse
     {
         $products = Product::query()
-            ->where('name', 'LIKE', '%'.$searchPosProductRequest->key.'%')
+            ->where('name', 'LIKE', '%' . $searchPosProductRequest->key . '%')
             ->when($searchPosProductRequest->excluded, function ($query) use ($searchPosProductRequest) {
                 $query->whereNotIn('id', $searchPosProductRequest->excluded);
             })

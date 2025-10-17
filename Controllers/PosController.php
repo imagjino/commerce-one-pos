@@ -7,8 +7,8 @@ namespace Imagjino\POS\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Imagjino\Additional\Models\Labels\Label;
-use Imagjino\POS\Helpers\PosOrderService;
-use Imagjino\POS\Requests\StorePosOrderRequest;
+use Imagjino\Pos\Helpers\PosOrderService;
+use Imagjino\Pos\Requests\StorePosOrderRequest;
 use Imagjino\Products\Models\Product;
 use Imagjino\Settings\Models\Country;
 use Imagjino\Settings\Models\Currency;
@@ -21,10 +21,12 @@ final readonly class PosController
 {
     public function __construct(
         private PosOrderService $posOrderService,
-    ) {}
+    )
+    {
+    }
 
     /**
-     * Return Inertia view of POS
+     * Return Inertia view of Pos
      */
     public function index(): Response
     {
@@ -50,7 +52,7 @@ final readonly class PosController
 
         $currency = Currency::query()->whereIsPrimary(true)->first();
 
-        return Inertia::render('POS::index', [
+        return Inertia::render('Pos::index', [
             'paymentMethods' => $paymentMethods,
             'cities' => $cities,
             'labels' => $labels,
