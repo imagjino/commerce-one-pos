@@ -31,12 +31,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Imagjino\\Pos\\": ""
+            "Imagjino\\POS\\": ""
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Imagjino\\Pos\\Tests\\": "tests"
+            "Imagjino\\POS\\Tests\\": "tests"
         }
     },
     "scripts": {
