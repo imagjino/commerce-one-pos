@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Imagjino\Pos\Requests;
+namespace Imagjino\POS\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;

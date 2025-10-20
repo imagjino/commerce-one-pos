@@ -26,7 +26,7 @@ final readonly class PosController
     }
 
     /**
-     * Return Inertia view of Pos
+     * Return Inertia view of POS
      */
     public function index(): Response
     {
@@ -52,7 +52,7 @@ final readonly class PosController
 
         $currency = Currency::query()->whereIsPrimary(true)->first();
 
-        return Inertia::render('Pos::index', [
+        return Inertia::render('POS::index', [
             'paymentMethods' => $paymentMethods,
             'cities' => $cities,
             'labels' => $labels,
