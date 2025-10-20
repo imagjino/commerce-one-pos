@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Imagjino\Orders\Models\Order;
 use Imagjino\Orders\Models\OrderLabel;
 use Imagjino\Orders\Models\OrderProduct;
-use Imagjino\Pos\Requests\StorePosOrderRequest;
+use Imagjino\POS\Requests\StorePosOrderRequest;
 use Imagjino\Products\Models\Variant;
 use Imagjino\Settings\Models\Currency;
 use Throwable;

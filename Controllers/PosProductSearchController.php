@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Imagjino\POS\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use Imagjino\Pos\Requests\SearchPosProductRequest;
+use Imagjino\POS\Requests\SearchPosProductRequest;
 use Imagjino\Products\Models\Product;
 
 final class PosProductSearchController
